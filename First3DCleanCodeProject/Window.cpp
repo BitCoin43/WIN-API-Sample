@@ -1,5 +1,6 @@
 #include "Window.h"
 #include <assert.h>
+#include <dwmapi.h>
 
 Window::Window(int width, int height, HINSTANCE hInstance)
 	:
@@ -28,12 +29,18 @@ Window::Window(int width, int height, HINSTANCE hInstance)
 	wr.right = WindowWidth + wr.left;
 	wr.top = 30;
 	wr.bottom = WindowHeight + wr.top;
-	AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+	AdjustWindowRect(&wr, WS_POPUP, FALSE);
 
-	hwnd = CreateWindowExA(0, pClassName, "Windows Framework", WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+	hwnd = CreateWindowEx(0, pClassName, "Windows Framework", WS_POPUP,
 		wr.left, wr.top, wr.right - wr.left, wr.bottom - wr.top, nullptr, nullptr, hInst, this);
 
-	ShowWindow(hwnd, SW_SHOWDEFAULT);
+	WindowPosX = wr.left;
+	WindowPosY = wr.top;
+	
+	HRGN hRgn = CreateRoundRectRgn(0, 0, WindowWidth, WindowHeight, 25, 25);
+	SetWindowRgn(hwnd, hRgn, true);
+
+	ShowWindow(hwnd,SW_SHOWDEFAULT);
 	//UpdateWindow(hwnd);
 }
 
@@ -82,6 +89,48 @@ int Window::GetWindowWidth() const
 int Window::GetWindowHeight() const
 {
 	return WindowHeight;
+}
+
+int Window::GetWindowPosX()
+{
+	return WindowPosX;
+}
+
+int Window::GetWindowPosY()
+{
+	return WindowPosY;
+}
+
+void Window::MoveWnd(int x, int y)
+{
+	WindowPosX += x;
+	WindowPosY += y;
+	MoveWindow(hwnd, WindowPosX, WindowPosY, WindowWidth, WindowHeight, true);
+}
+
+void Window::MaximaseWindow(int height, int width)
+{
+	RECT rect = { 0, 0, width, height }; // новые размеры окна
+	AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+
+	SetWindowLongPtrA(hwnd, GWL_EXSTYLE, WS_POPUP | WS_MAXIMIZE | WS_VISIBLE);
+	SetWindowPos(hwnd, NULL, 0, 0, width, height, true);
+
+	WindowWidth = width;
+	WindowHeight = height;
+	ResizeDIB(width, height);
+
+	HRGN hRgn = CreateRoundRectRgn(0, 0, WindowWidth, WindowHeight, 0, 0);
+	
+	SetWindowRgn(hwnd, hRgn, true);
+	WindowPosX = 0;
+	WindowPosY = 0;
+	bool b = MoveWindow(hwnd, 0, 0, width, height, true);
+}
+
+void Window::SetWindowPosition(int x, int y)
+{
+	MoveWindow(hwnd, x, y, WindowWidth, WindowHeight, true);
 }
 
 void Window::ClearScreenSuperFast()
@@ -270,7 +319,6 @@ LRESULT Window::HandleMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 	}
-	// ************ END MOUSE MESSAGES ************ //
 	}
 	return DefWindowProcA(hwnd, msg, wParam, lParam);
 }

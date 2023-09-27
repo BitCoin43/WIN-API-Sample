@@ -1,0 +1,156 @@
+﻿Написать функции для спектрального и сингулярного разложения с нуля может быть сложной задачей, требующей глубоких знаний в теории линейной алгебры. 
+Они тесно связаны с поиском собственных векторов и собственных значений матрицы, что требует знаний и итеративных алгоритмов, таких как метод Якоби или алгоритм QR.
+
+Однако, в общих чертах, функции могут выглядеть следующим образом:
+
+1. Спектральное разложение: 
+Спектральное разложение матрицы А представляет его в виде A = QΛQ' , где:
+- Q это матрица, состоящая из собственных векторов матрицы А;
+- Λ это диагональная матрица, элементами которой являются собственные значения, соответствующие собственным векторам в Q;
+- Q' это транспонированная матрица собственных векторов.
+
+Сначала мы должны найти собственные значения матрицы. Затем, по каждому собственному числу, мы вычисляем соответствующий собственный вектор.
+
+2. Сингулярное разложение: 
+Сингулярное разложение матрицы А представляет его в виде A = UΣV' , где:
+- U и V - это ортогональные матрицы, состоящие из левых и правых сингулярных векторов соответственно;
+- Σ - это диагональная матрица сингулярных значений.
+
+Сначала мы должны найти сингулярные значения матрицы, вычислив собственные значения квадрата матрицы (AA' или A'A). Затем, мы находим соответствующие левые и правые сингулярные векторы.
+
+Тем не менее, реализация этих функций требует достаточно сложной математической работы и использования итеративных алгоритмов. 
+Также отметим, что обе функции являются довольно медленными и неточными на больших матрицах, поэтому рекомендуется использовать библиотеки, такие как Eigen or Armadillo, 
+которые оптимизированы для этих вычислений.  
+
+
+det(A - λI) = 0, где:
+
+A - это матрица;
+λ - скаляр;
+I - единичная матрица того же размера, что и A;
+det(...) расчитывает определитель матрицы.
+
+
+float vectorNorm(float* vector, int size) {
+    float sum = 0.0f;
+    for (int i = 0; i < size; i++) {
+        sum += vector[i] * vector[i];
+    }
+    return std::sqrt(sum);
+}
+
+// Функция для нормализации вектора
+void normalizeVector(float* vector, int size) {
+    float norm = vectorNorm(vector, size);
+    for (int i = 0; i < size; i++) {
+        vector[i] /= norm;
+    }
+}
+
+// Функция для умножения матрицы на вектор
+void matrixVectorMultiply(Matrix& matrix, float* vector, float* result) {
+    int matrixWidth = matrix.getWidth();
+    int matrixHeight = matrix.getHeight();
+    for (int i = 0; i < matrixHeight; i++) {
+        float sum = 0.0f;
+        for (int j = 0; j < matrixWidth; j++) {
+            sum += matrix.getValue(j, i) * vector[j];
+        }
+        result[i] = sum;
+    }
+}
+
+// Функция для нахождения собственных значений матрицы
+void findEigenvalues(Matrix& matrix, float* eigenvalues) {
+    int matrixSize = matrix.getWidth();
+    float* initialVector = new float[matrixSize];
+    float* nextVector = new float[matrixSize];
+    float epsilon = 0.0001f;
+
+    // Инициализация начального вектора
+    for (int i = 0; i < matrixSize; i++) {
+        initialVector[i] = 1.0f;
+    }
+
+    normalizeVector(initialVector, matrixSize);
+
+    // Метод степенной итерации
+    bool converged = false;
+    float lambda = 0.0f;
+
+    while (!converged) {
+        matrixVectorMultiply(matrix, initialVector, nextVector);
+
+        normalizeVector(nextVector, matrixSize);
+
+        float lambdaNew = 0.0f;
+        for (int i = 0; i < matrixSize; i++) {
+            if (nextVector[i] != 0) {
+                lambdaNew = nextVector[i] / initialVector[i];
+                break;
+            }
+        }
+
+        if (std::fabs(lambdaNew - lambda) < epsilon) {
+            converged = true;
+        }
+
+        lambda = lambdaNew;
+
+        std::swap(initialVector, nextVector);
+    }
+
+    eigenvalues[0] = lambda;
+
+    delete[] initialVector;
+    delete[] nextVector;
+}
+
+// Функция для нахождения собственных векторов матрицы
+void findEigenvectors(Matrix& matrix, float eigenvalue, float* eigenvectors) {
+    int matrixSize = matrix.getWidth();
+    Matrix identity(matrixSize, matrixSize);
+    Matrix subtractedMatrix = matrix - (identity * eigenvalue);
+
+    // Предполагается, что matrixSize не больше размерности типа int
+    float* vector = new float[matrixSize];
+
+    for (int i = 0; i < matrixSize; i++) {
+        vector[i] = 1.0f;
+    }
+
+    normalizeVector(vector, matrixSize);
+
+    int maxIterations = 100;
+    int iteration = 0;
+    float epsilon = 0.0001f;
+
+    while (iteration < maxIterations) {
+        float* nextVector = new float[matrixSize];
+        matrixVectorMultiply(subtractedMatrix, vector, nextVector);
+
+        normalizeVector(nextVector, matrixSize);
+
+        float normDiff = 0.0f;
+        for (int i = 0; i < matrixSize; i++) {
+            normDiff += std::fabs(nextVector[i] - vector[i]);
+        }
+
+        if (normDiff < epsilon) {
+            break;
+        }
+
+        std::swap(vector, nextVector);
+
+        delete[] nextVector;
+
+        iteration++;
+    }
+
+    // Копирование найденного собственного вектора в результат
+    for (int i = 0; i < matrixSize; i++) {
+        eigenvectors[i] 
+        eigenvectors[i] = vector[i];
+
+    delete[] vector;
+}

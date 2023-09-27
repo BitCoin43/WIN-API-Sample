@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\code\other_librarys\build\CMakeFiles\c1b9b7ff3c48fcff4976a875e61ca38e\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\code\other_librarys\builds\cmake\FindHarfBuzz.cmake">
+      <Filter>Buildsystem Input Files\builds\cmake</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{3B1B38F3-11CA-3D15-AA71-F880B9B2BDD3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Buildsystem Input Files\builds\cmake">
+      <UniqueIdentifier>{B9653E1D-3BA3-377A-B149-1E65642A7CA9}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

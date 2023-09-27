@@ -1,0 +1,5 @@
+C:/code/other_librarys/build/CMakeFiles/freetype.dir
+C:/code/other_librarys/build/CMakeFiles/PACKAGE.dir
+C:/code/other_librarys/build/CMakeFiles/INSTALL.dir
+C:/code/other_librarys/build/CMakeFiles/ALL_BUILD.dir
+C:/code/other_librarys/build/CMakeFiles/ZERO_CHECK.dir

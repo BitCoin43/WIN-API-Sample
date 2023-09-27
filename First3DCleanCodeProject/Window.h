@@ -14,6 +14,12 @@ public:
 	HWND GetCustomWindow() const;
 	int GetWindowWidth() const;
 	int GetWindowHeight()const;
+	int GetWindowPosX();
+	int GetWindowPosY();
+
+	void MoveWnd(int x, int y);
+	void MaximaseWindow(int height, int width);
+	void SetWindowPosition(int x, int y);
 private:
 	static LRESULT CALLBACK StartMessage(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static LRESULT CALLBACK MessageSetup(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -33,7 +39,8 @@ private:
 	int WindowHeight;
 	LPSTR pClassName = new TCHAR[1];
 	
-
+	int WindowPosX;
+	int WindowPosY;
 public:
 	Keyboard kbd;
 	Mouse mouse;
