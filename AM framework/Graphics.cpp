@@ -1,5 +1,6 @@
 #include "Graphics.h"
 #include <iostream>
+#include <cmath>
 #include <assert.h>
 #include FT_OUTLINE_H 
 
@@ -222,6 +223,43 @@ void Graphics::DrawLine(int* Colors, int x1, int x2, int y1, int y2, unsigned ch
 	}
 }
 
+void Graphics::DrawLineSmooth(int* Colors, int x0, int y0, int x1, int y1, unsigned char r, unsigned char g, unsigned char b, unsigned char a)
+{
+	const bool steep = abs(y1 - y0) > abs(x1 - x0);
+	if (steep) {
+		std::swap(x0, y0);
+		std::swap(x1, y1);
+	}
+
+	if (x0 > x1) {
+		std::swap(x0, x1);
+		std::swap(y0, y1);
+	}
+
+	const float dx = x1 - x0;
+	const float dy = y1 - y0;
+	const float gradient = (dx == 0) ? 1 : dy / dx;
+
+	int xpxl1 = x0, xpxl2 = x1;
+	float intersectY = y0;
+
+	// ensure that we always go from left to right
+	if (steep) {
+		for (int x = xpxl1; x <= xpxl2; x++) {
+			DrawPixelA(Colors, (int)intersectY, x, r, g, b, a * (1 - (intersectY - int(intersectY))));
+			DrawPixelA(Colors, (int)intersectY + 1, x, r, g, b, a * (intersectY - int(intersectY)));
+			intersectY += gradient;
+		}
+	}
+	else {
+		for (int x = xpxl1; x <= xpxl2; x++) {
+			DrawPixelA(Colors, x, (int)intersectY, r, g, b, a * (1 - (intersectY - int(intersectY))));
+			DrawPixelA(Colors, x, (int)intersectY + 1, r, g, b, a * (intersectY - int(intersectY)));
+			intersectY += gradient;
+		}
+	}
+}
+
 void Graphics::DrawLinePrivate(int* Colors, int x1, int x2, int y1, int y2, unsigned char r, unsigned char g, unsigned char b)
 {
 	const int deltaX = abs(x2 - x1);
@@ -302,6 +340,12 @@ void Graphics::DrawTextFT(int* Colors, int fontSize, std::string text, int x, in
 		FT_Outline_Get_CBox(outline, &box);
 
 		int delta = fontSize * 0.75 - slot->bitmap.rows;
+		if (text[i] == '=') {
+			delta -= fontSize * 0.1;
+		}
+		if (text[i] == '-') {
+			delta -= fontSize * 0.2;
+		}
 		for (int row = 0; row < slot->bitmap.rows; row++) {
 			for (int col = 0; col < slot->bitmap.width; col++) {
 				int alpha = slot->bitmap.buffer[row * slot->bitmap.width + col];

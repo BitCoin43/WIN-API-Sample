@@ -40,6 +40,15 @@ Engine::Engine(Window& wnd)
 	}
 
 	w = (inverse(transpose(Xtrain) * Xtrain) * transpose(Xtrain) * Ytrain).getValue(0, 0);
+
+	int screenWidth = GetSystemMetrics(SM_CXSCREEN) + 1;
+	int screenHeight = GetSystemMetrics(SM_CYSCREEN) + 1;
+	gfx.setWindowWidth(screenWidth);
+	gfx.setWindowHeight(screenHeight);
+	wnd.MaximaseWindow(screenHeight, screenWidth);
+	Colors = wnd.GetColorBuffer();
+	//wnd.window_width = screenWidth;
+	isMaximase = true;
 }
 
 Engine::~Engine()
@@ -189,13 +198,31 @@ void Engine::ComposeFrame()
 {
 	gfx.FillScreenFast(Colors, 20, 20, 20);
 	gfx.DrawLinePrivate(Colors, 0, wndf->GetWindowWidth(), 25, 25, 90, 90, 90);
+	
+	int xtt = 20 + terminalPadding;
+	int xtt2 = 1020 + terminalPadding;
+	int ytt = wndf->GetWindowHeight() - (20 * c) - 300;
+	int ytt2 = 0;
+	
+	
+	//gfx.DrawPixel(Colors, x + terminalPadding, wndf->GetWindowHeight() - 300, 90, 90, 90);
+	gfx.DrawLine(Colors, 100 + terminalPadding, terminalPadding + 900, wndf->GetWindowHeight() / 2, wndf->GetWindowHeight() / 2, 90, 90, 90);
+	gfx.DrawLine(Colors, terminalPadding + 510, terminalPadding + 510, wndf->GetWindowHeight() / 2 - 400, wndf->GetWindowHeight() / 2 + 400, 90, 90, 90);
+	gfx.DrawLineSmooth(Colors, terminalPadding + 900, wndf->GetWindowHeight() / 2, terminalPadding + 900 - 10, wndf->GetWindowHeight() / 2 + 10, 90, 90, 90, 255);
+	gfx.DrawLineSmooth(Colors, terminalPadding + 900, wndf->GetWindowHeight() / 2, terminalPadding + 900 - 10, wndf->GetWindowHeight() / 2 - 10, 90, 90, 90, 255);
 
-	for (int x = 20; x < 1000; x++)
-		gfx.DrawPixel(Colors, x + terminalPadding, wndf->GetWindowHeight() - 300, 90, 90, 90);
+	gfx.DrawLineSmooth(Colors, terminalPadding + 510, wndf->GetWindowHeight() / 2 - 400, terminalPadding + 510 - 10, wndf->GetWindowHeight() / 2 - 400 + 10, 90, 90, 90, 255);
+	gfx.DrawLineSmooth(Colors, terminalPadding + 510, wndf->GetWindowHeight() / 2 - 400, terminalPadding + 510 + 10, wndf->GetWindowHeight() / 2 - 400 + 10, 90, 90, 90, 255);
+	
+	gfx.DrawTextFT(Colors, 20, "x", terminalPadding + 920, wndf->GetWindowHeight() / 2 - 10, 90, 90, 90);
 
-	for (int x = 20; x < 1000; x++)
+	
+	for (int x = 20; x < 1000; x++) {
 		gfx.DrawPixel(Colors, x + terminalPadding, wndf->GetWindowHeight() - (x * c) - 300, 255, 0, 0);
-
+		ytt2 = wndf->GetWindowHeight() - (x * c) - 300;
+	}
+	
+	
 	for (int i = 0; i < 19; i++) {
 		int x = points[i].x;
 		int y = points[i].y;
@@ -203,10 +230,12 @@ void Engine::ComposeFrame()
 		gfx.DrawElipsSmooth(Colors, 5, x + terminalPadding, wndf->GetWindowHeight() - y - 300, 0, 0, 255);
 	}
 
-	for (int x = 20; x < 1000; x++)
-		gfx.DrawPixel(Colors, x + terminalPadding, wndf->GetWindowHeight() - (x * w) - 300, 0, 255, 0);
+	//for (int x = 20; x < 1000; x++)
+		//gfx.DrawPixel(Colors, x + terminalPadding, wndf->GetWindowHeight() - (x * w) - 300, 0, 255, 0);terminalPadding + 1000
 
-	
+	gfx.DrawLineSmooth(Colors, 20 + terminalPadding, wndf->GetWindowHeight() - (20 * w) - 300, terminalPadding + 1000, wndf->GetWindowHeight() - (1000 * w) - 300, 0, 255, 0, 255);
+
+	//gfx.DrawLineSmooth(Colors, 500, 400, wndf->mouse.GetPosX(), wndf->mouse.GetPosY(), 255, 255, 255, 255);
 }
 
 void Engine::DrawHeader()

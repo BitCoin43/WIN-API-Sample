@@ -21,6 +21,7 @@ public:
 	void DrawRectanclePrivate(int* Colors, int xMin, int xMax, int yMin, int yMax, unsigned char r, unsigned char g, unsigned char b);
 	void DrawElips(int* Colors, int x0, int y0, int R, unsigned char r, unsigned char g, unsigned char b);
 	void DrawLine(int* Colors, int x1, int x2, int y1, int y2, unsigned char r, unsigned char g, unsigned char b);
+	void DrawLineSmooth(int* Colors, int x1, int y1, int x2, int y2, unsigned char r, unsigned char g, unsigned char b, unsigned char a);
 	void DrawLinePrivate(int* Colors, int x1, int x2, int y1, int y2, unsigned char r, unsigned char g, unsigned char b);
 	void Write(int* Colors, int x1, int x2, int y1, int y2);
 	void DrawElipsSmooth(int* Colors, int R, int x, int y, unsigned char r, unsigned char g, unsigned char b);
